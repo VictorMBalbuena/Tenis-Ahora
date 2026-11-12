@@ -1,0 +1,34 @@
+# Perfil de producción: base en Neon.
+spring:
+  datasource:
+    hikari:
+      # Neon gratuito y Render con 512 MB: pocas conexiones alcanzan y evitan errores por límite
+      maximum-pool-size: 5
+      minimum-idle: 1
+      # Neon apaga la base tras 5 minutos sin uso; esto le da tiempo a despertar
+      connection-timeout: 30000
+  jpa:
+    hibernate:
+      # "update" crea y actualiza las tablas a partir de las entidades.
+      # Si más adelante se usan migraciones con Flyway (scripts del DER), cambiar a "validate".
+      ddl-auto: ${DDL_AUTO:update}
+    show-sql: false
+
+# La documentación de la API (Swagger) se puede apagar en producción con SWAGGER_ENABLED=false
+springdoc:
+  api-docs:
+    enabled: ${SWAGGER_ENABLED:true}
+  swagger-ui:
+    enabled: ${SWAGGER_ENABLED:true}
+
+# Detrás del proxy de Render la IP de quien pide viene en X-Forwarded-For. Sin esto el límite por IP vería a todas las
+# personas como una sola (la IP del proxy).
+server:
+  forward-headers-strategy: native
+
+# En producción el origen del front es obligatorio (sin valor por defecto a localhost)
+app:
+  cors:
+    allowed-origins: ${FRONTEND_URL}
+  cookie:
+    secure: true

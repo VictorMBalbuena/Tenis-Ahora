@@ -1,0 +1,25 @@
+# Base de datos local para desarrollo.
+# Uso: docker compose up -d
+# Si ya tenés PostgreSQL instalado en tu máquina usando el puerto 5432, cambiá "127.0.0.1:5432:5432" por "127.0.0.1:5433:5432"
+# y en el .env usá localhost:5433.
+services:
+  db:
+    image: postgres:16
+    container_name: tenis-ahora-db
+    environment:
+      POSTGRES_DB: tenis_ahora
+      POSTGRES_USER: ${DB_USER:-tenis}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-tenis}
+    ports:
+      # Solo accesible desde tu propia máquina, no desde la red (ej. el WiFi de la facultad)
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-tenis} -d tenis_ahora"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  db_data:

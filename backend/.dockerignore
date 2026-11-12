@@ -1,0 +1,19 @@
+# Lo que NO entra a la imagen de Docker
+target/
+.git/
+.gitignore
+.env
+.env.*
+!.env.example
+.vscode/
+.idea/
+*.iml
+.project
+.classpath
+.settings/
+bin/
+*.log
+docker-compose.yml
+Dockerfile
+README.md
+docs/

@@ -1,0 +1,26 @@
+# Compilación
+target/
+bin/
+out/
+*.class
+
+# Variables de entorno (nunca se suben)
+.env
+
+# Archivos que genera la extensión Java de VS Code / Eclipse
+.project
+.classpath
+.settings/
+.factorypath
+
+# IntelliJ
+.idea/
+*.iml
+
+# Sistema y logs
+.DS_Store
+Thumbs.db
+*.log
+
+# VS Code: configuración local de cada uno, no se versiona
+.vscode/

@@ -1,0 +1,17 @@
+# Perfil de desarrollo: base local con docker compose.
+# Tiene valores por defecto para poder arrancar sin el archivo .env.
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/tenis_ahora}
+    username: ${DB_USER:tenis}
+    password: ${DB_PASSWORD:tenis}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+app:
+  mercadopago:
+    sandbox: ${MP_SANDBOX:true}
+  jwt:
+    secret: ${JWT_SECRET:clave-solo-para-desarrollo-local-no-usar-en-produccion}

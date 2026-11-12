@@ -1,0 +1,44 @@
+/**
+ * Impresion de la ficha del descuento (CU66).
+ *
+ * La ficha se monta solo al imprimir un descuento. Mientras esta montada se
+ * esconde todo lo demas con visibility, que a diferencia de display:none no
+ * rompe el layout de los ancestros, y se deja visible solo la ficha.
+ *
+ * Es una solucion de front: imprime o genera el PDF desde el navegador. Si
+ * mas adelante el backend expone el PDF (hay un paquete infrastructure/pdf
+ * reservado para eso), esto se reemplaza por una descarga.
+ */
+.ficha-impresion {
+  display: none;
+}
+
+@media print {
+  body:has(.ficha-impresion) * {
+    visibility: hidden;
+  }
+
+  .ficha-impresion,
+  .ficha-impresion * {
+    visibility: visible;
+  }
+
+  .ficha-impresion {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 0;
+    color: #000;
+    background: #fff;
+  }
+
+  .ficha-impresion button {
+    display: none;
+  }
+
+  @page {
+    margin: 18mm;
+  }
+}

@@ -1,0 +1,46 @@
+# Gitignore de la raíz del repo: cubre lo genérico (sistema, editor, variables de entorno) y sirve de red
+# por si algo corre desde la raíz en vez de desde backend/ o front/. Cada uno de esos tiene además su propio
+# .gitignore con lo específico de su stack (Maven en backend/, Vite/pnpm en front/).
+
+# Variables de entorno: nunca se suben, en ningún nivel
+.env
+.env.local
+.env.*.local
+*.env
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editores e IDEs: configuración local de cada uno, no se versiona
+.vscode/
+.idea/
+*.iml
+*.sw?
+
+# Compilación / dependencias (red de seguridad; backend/ y front/ ya las ignoran igual con sus propios archivos)
+target/
+bin/
+out/
+*.class
+node_modules/
+dist/
+dist-ssr/
+build/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Archivos temporales
+*.tmp
+*.bak
+*.orig
+# Planes de implementación (AGENTS.md: nunca commitear planes)
+docs/superpowers/plans/
+*.plan.md

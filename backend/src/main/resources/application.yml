@@ -1,0 +1,108 @@
+spring:
+  application:
+    name: tenis-ahora
+  # Carga backend/.env si existe (en producción no hay archivo y valen las variables del deploy, que además tienen prioridad)
+  config:
+    import: optional:file:.env[.properties]
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+  mail:
+    host: ${MAIL_HOST:}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+  jpa:
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+  # Un poco más que los 2 MB que se aceptan en /me/foto: deja margen al resto del multipart
+  servlet:
+    multipart:
+      max-file-size: 3MB
+      max-request-size: 3MB
+
+server:
+  port: ${PORT:8080}
+  error:
+    include-stacktrace: never
+
+app:
+  jwt:
+    secret: ${JWT_SECRET}
+    expiration-minutes: 30
+  # Pasarela de pagos (RD23, CU77, CU78, CU88). Las credenciales llegan por variable de entorno.
+  mercadopago:
+    access-token: ${MP_ACCESS_TOKEN:}
+    # Clave con la que se verifica la firma de los avisos; sin esto el webhook rechaza todo
+    webhook-secret: ${MP_WEBHOOK_SECRET:}
+    # Fija a propósito: la dirección de la API nunca se toma del aviso recibido
+    url-base: ${MP_URL_BASE:https://api.mercadopago.com}
+    minutos-vigencia-qr: 10
+    # true con credenciales de prueba: el QR apunta al link de sandbox
+    sandbox: ${MP_SANDBOX:false}
+  # Cobro de la seña de reserva (RD09, RD21, RD23)
+  cobros:
+    max-cuotas: 24
+    # Cada cuánto se vencen los QR que ya expiraron y se concilian los pagos de los que no llegó el aviso
+    intervalo-vencimiento-qr-ms: 60000
+    intervalo-conciliacion-ms: 300000
+  # Fotos de perfil (CU de /me). En disco local; servidas como estático en /fotos/**
+  fotos:
+    directorio: ${FOTOS_DIR:./uploads/fotos}
+  cors:
+    allowed-origins: ${FRONTEND_URL:http://localhost:5173}
+  # Cookie del refresh token. En producción: secure=true. same-site=Strict si el front y la API son del mismo sitio;
+  # None solo si son de sitios distintos (exige secure=true y que el navegador acepte cookies de terceros).
+  cookie:
+    secure: ${COOKIE_SECURE:false}
+    same-site: ${COOKIE_SAME_SITE:Strict}
+  # CU71 A3: bloqueo de la cuenta tras varios intentos fallidos seguidos
+  login:
+    max-intentos-fallidos: 5
+    bloqueo-minutos: 15
+  # Límite de pedidos por IP (en memoria, una sola instancia). Son topes holgados: en la red de la facultad muchas
+  # personas comparten una IP.
+  rate-limit:
+    login:
+      max: 60
+      ventana-minutos: 15
+    registro:
+      max: 10
+      ventana-minutos: 60
+    refresh:
+      max: 120
+      ventana-minutos: 15
+  # Reglas de las reservas de cancha (RD06, RD07, RD09, RD12, RD13, RD17)
+  reservas:
+    antelacion-maxima-dias: 30
+    duracion-maxima-horas: 2
+    plazo-cancelacion-horas: 6
+    porcentaje-senia: 50
+    # A tiempo se devuelve este porcentaje de lo pagado; fuera de plazo se pierde la seña
+    porcentaje-reembolso-a-tiempo: 100
+    # Una reserva que sigue pendiente de pago pasado este tiempo se cancela sola y libera el horario
+    minutos-para-vencer-pendientes: 30
+    # Se puede iniciar el alquiler desde estos minutos antes del turno hasta su fin
+    minutos-antes-para-iniciar: 30
+    # Una reserva en curso se finaliza sola pasado el fin del turno más este margen
+    margen-finalizacion-minutos: 30
+    # Tope de insumos distintos por reserva y de unidades de cada uno
+    max-renglones-de-insumos: 10
+    max-unidades-por-insumo: 20
+  # Reglas de las clases (CU70, RD01, RD04)
+  inscripciones:
+    # Una inscripción sin la seña paga pasado este tiempo se cancela sola y libera el lugar
+    minutos-para-vencer: 30
+    # Con esta antelación al inicio se devuelve lo pagado; después se pierde
+    plazo-cancelacion-horas: 6
+    porcentaje-reembolso-a-tiempo: 100
+  actividades:
+    # Tope que ninguna clase puede superar, lo pida quien lo pida
+    cupo-maximo-general: 30
+    # El que se usa si al programar la clase no se indica un cupo
+    cupo-por-defecto: 30
